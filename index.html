@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Budget Planner 💲</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Futuristic Neon Neuomorphic CSS --- */
+        :root {
+            /* Light Theme Variables */
+            --bg-color-light: #e0e5ec;
+            --card-bg-light: #e0e5ec;
+            --text-dark-light: #525865;
+            --text-light-light: #9ba1b1;
+            --primary-color-light: #007BFF;
+            --primary-glow-light: rgba(0, 123, 255, 0.5);
+            --secondary-color-light: #FF9800;
+            --error-color-light: #f44336;
+            --success-color-light: #4CAF50;
+            --shadow-light: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+            --shadow-inset-light: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+            --icon-color-light: #525865;
+
+            /* Dark Theme Variables */
+            --bg-color-dark: #2c2f3b;
+            --card-bg-dark: #2c2f3b;
+            --text-dark-dark: #e0e5ec;
+            --text-light-dark: #8c909c;
+            --primary-color-dark: #03a9f4;
+            --primary-glow-dark: rgba(3, 169, 244, 0.7);
+            --secondary-color-dark: #ffc107;
+            --error-color-dark: #e91e63;
+            --success-color-dark: #00e676;
+            --shadow-dark: 8px 8px 16px #21242d, -8px -8px 16px #373a49;
+            --shadow-inset-dark: inset 6px 6px 12px #21242d, inset -6px -6px 12px #373a49;
+            --icon-color-dark: #e0e5ec;
+        }
+
+        /* Assigning variables based on theme */
+        [data-theme="light"] {
+            --bg-color: var(--bg-color-light);
+            --card-bg: var(--card-bg-light);
+            --text-dark: var(--text-dark-light);
+            --text-light: var(--text-light-light);
+            --primary-color: var(--primary-color-light);
+            --primary-glow: var(--primary-glow-light);
+            --secondary-color: var(--secondary-color-light);
+            --error-color: var(--error-color-light);
+            --success-color: var(--success-color-light);
+            --shadow: var(--shadow-light);
+            --shadow-inset: var(--shadow-inset-light);
+            --icon-color: var(--icon-color-light);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--bg-color-dark);
+            --card-bg: var(--card-bg-dark);
+            --text-dark: var(--text-dark-dark);
+            --text-light: var(--text-light-dark);
+            --primary-color: var(--primary-color-dark);
+            --primary-glow: var(--primary-glow-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --error-color: var(--error-color-dark);
+            --success-color: var(--success-color-dark);
+            --shadow: var(--shadow-dark);
+            --shadow-inset: var(--shadow-inset-dark);
+            --icon-color: var(--icon-color-dark);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { font-size: 16px; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(20px, 4vw, 50px);
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: clamp(25px, 4vw, 40px);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: clamp(20px, 3vw, 30px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--primary-glow);
+        }
+        h1 { font-size: clamp(2rem, 5vw, 2.8rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        input[type="number"], input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            box-shadow: var(--shadow-inset);
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: var(--shadow-inset), 0 0 10px var(--primary-glow);
+        }
+        input::placeholder { color: var(--text-light); }
+        input[type="date"] { color-scheme: var(--theme-mode, light); }
+        [data-theme="dark"] input[type="date"] { color-scheme: dark; }
+
+        .button, button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            padding: 15px 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease-in-out;
+            text-shadow: 0 0 3px var(--primary-glow);
+        }
+        .button:hover, button:hover {
+            color: var(--success-color);
+            transform: translateY(-2px);
+        }
+        .button:active, button:active {
+            box-shadow: var(--shadow-inset);
+            transform: translateY(1px);
+        }
+        
+        .button-group { display: flex; gap: 15px; margin-top: 15px; }
+        .button.secondary { color: var(--secondary-color); text-shadow: 0 0 3px var(--secondary-color); }
+        .button.secondary:hover { color: var(--secondary-color); }
+        .button.danger { color: var(--error-color); text-shadow: 0 0 3px var(--error-color); }
+        .button.danger:hover { color: var(--error-color); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 2px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(to right, transparent, var(--primary-color), transparent);
+        }
+        th { color: var(--primary-color); font-weight: 600; }
+        td { font-size: 0.95rem; }
+
+        .summary-section p { font-size: 1.2rem; margin: 15px 0; font-weight: 500; }
+        .summary-section span {
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 10px;
+            background-color: var(--bg-color);
+            box-shadow: var(--shadow-inset);
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+        }
+        #remainingBudgetDisplay.positive { color: var(--success-color); }
+        #remainingBudgetDisplay.negative { color: var(--error-color); }
+
+        .chart-container { position: relative; height: 350px; width: 100%; margin: 20px auto; }
+
+        .error-message { color: var(--error-color); font-size: 0.9rem; margin-top: -10px; margin-bottom: 10px; display: none; }
+        .error-message.visible { display: block; }
+
+        .action-buttons { display: flex; gap: 10px; justify-content: center; }
+        .action-buttons button { width: auto; padding: 10px 15px; border-radius: 12px; font-size: 1rem; }
+
+        /* Hamburger Menu & Sidebar */
+        .menu-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .menu-toggle i { font-size: 1.5rem; color: var(--icon-color); transition: transform 0.3s ease; }
+        .sidebar.open ~ .menu-toggle i { transform: rotate(180deg); }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: var(--bg-color);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 80px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .sidebar.open { right: 0; }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+        }
+        .sidebar.open ~ .overlay { opacity: 1; visibility: visible; }
+
+        .sidebar-item {
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            background: var(--card-bg);
+            color: var(--text-dark);
+        }
+        .sidebar-item h3 { margin-bottom: 10px; color: var(--primary-color); font-size: 1rem; }
+        .sidebar-item a { color: var(--text-dark); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .sidebar-item a:hover { color: var(--primary-color); }
+        .sidebar-item i { width: 20px; text-align: center; color: var(--secondary-color); }
+        
+        /* Theme/Language Toggles */
+        .toggle-container { display: flex; justify-content: space-between; align-items: center; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-color); box-shadow: var(--shadow-inset); transition: .4s; border-radius: 34px; }
+        .slider:before {
+            position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+            background-color: var(--secondary-color); transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* About Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 1050; display: none; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg-color); padding: 30px; border-radius: 20px; box-shadow: var(--shadow);
+            max-width: 500px; width: 90%; text-align: center; position: relative;
+        }
+        .modal-content .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: var(--error-color); }
+        .modal-content p { margin-top: 15px; color: var(--text-light); }
+
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { 
+                box-shadow: var(--shadow);
+                border-radius: 15px;
+                margin-bottom: 15px;
+                padding: 15px;
+                background: var(--card-bg);
+                overflow: hidden;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid var(--text-light);
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            tr td:last-child { border-bottom: none; }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hamburger Menu Icon -->
+    <div class="menu-toggle" aria-label="Open Menu">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-item">
+            <h3 data-lang="language">Language</h3>
+            <div class="toggle-container">
+                <span data-lang="english">English</span>
+                <label class="switch">
+                    <input type="checkbox" id="languageToggle">
+                    <span class="slider"></span>
+                </label>
+                <span data-lang="hindi">Hindi</span>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            <h3 data-lang="theme">Theme</h3>
+            <div class="toggle-container">
+                <span data-lang="light">Light</span>
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span data-lang="dark">Dark</span>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            <a href="https://youtube.com/@movietimewithai?si=JVINGxUeWPJCTgAJ" target="_blank">
+                <i class="fa-brands fa-youtube"></i> Movie Time With AI 🍿
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="https://t.me/aicodingproject" target="_blank">
+                <i class="fa-brands fa-telegram"></i> AI Coding Project
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="#" id="aboutLink">
+                <i class="fa-solid fa-circle-info"></i> <span data-lang="about">About</span>
+            </a>
+        </div>
+        <div class="sidebar-item" style="text-align: center; font-size: 0.9rem; color: var(--text-light);">
+            <span data-lang="createdBy">Created by:</span><br>Movie Time With AI 🍿
+        </div>
+    </nav>
+    <div class="overlay"></div>
+
+    <!-- About Modal -->
+    <div class="modal-overlay" id="aboutModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeAboutModal">&times;</span>
+            <h2 data-lang="aboutApp">About App</h2>
+            <p data-lang="aboutText">This is a futuristic budget planner designed to help you manage your finances with ease. Track your income and expenses, visualize your spending with charts, and stay on top of your financial goals with a sleek, modern interface.</p>
+        </div>
+    </div>
+
+
+    <main class="main-container">
+        <h1 data-lang="appTitle">Advanced Budget Planner 💲</h1>
+        
+        <div class="grid-layout">
+            <section class="card">
+                <h2 data-lang="setBudgetTitle">Set/Update Budget</h2>
+                <div class="form-group">
+                    <label for="totalBudget" data-lang="totalMonthlyBudget">Total Monthly Budget:</label>
+                    <input type="number" id="totalBudget" data-lang-placeholder="placeholderBudget" min="0" step="any" required>
+                    <div id="budgetError" class="error-message"></div>
+                </div>
+                <button id="setBudgetBtn" class="button"><i class="fa-solid fa-piggy-bank"></i> <span data-lang="setBudgetBtn">Set Budget</span></button>
+            </section>
+
+            <section class="card">
+                <h2 data-lang="addEditExpenseTitle">Add/Edit Expense ✏️</h2>
+                <input type="hidden" id="editIndex">
+                <div class="form-group">
+                    <label for="expenseDate" data-lang="date">Date:</label>
+                    <input type="date" id="expenseDate" required>
+                    <div id="dateError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="expenseCategory" data-lang="category">Category:</label>
+                    <input type="text" id="expenseCategory" data-lang-placeholder="placeholderCategory" required>
+                    <div id="categoryError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount" data-lang="amount">Amount:</label>
+                    <input type="number" id="expenseAmount" data-lang-placeholder="placeholderAmount" min="0.01" step="any" required>
+                    <div id="amountError" class="error-message"></div>
+                </div>
+                <div class="button-group">
+                    <button id="addExpenseBtn" class="button"><i class="fa-solid fa-plus"></i> <span data-lang="addExpenseBtn">Add Expense</span></button>
+                    <button id="cancelEditBtn" class="button secondary" style="display: none;"><i class="fa-solid fa-xmark"></i> <span data-lang="cancelBtn">Cancel</span></button>
+                </div>
+            </section>
+
+            <section class="card" style="grid-column: 1 / -1;">
+                <h2 data-lang="expenseListTitle">Expense List 🧾</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-lang="date">Date</th>
+                            <th data-lang="category">Category</th>
+                            <th data-lang="amount">Amount</th>
+                            <th data-lang="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody"></tbody>
+                </table>
+                <p id="noExpensesMessage" style="text-align:center; margin-top: 15px; display: none;" data-lang="noExpenses">No expenses added yet.</p>
+            </section>
+
+            <section class="card">
+                <h2 data-lang="summaryChartTitle">Spending Chart 📊</h2>
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                    <p id="noChartDataMessage" style="text-align:center; margin-top: 15px; display: none;" data-lang="noChartData">Not enough data to display chart.</p>
+                </div>
+            </section>
+
+            <section class="card summary-section">
+                <h2 data-lang="summaryTitle">Budget Summary 📉📈</h2>
+                <p><span data-lang="totalBudget">Total Budget</span>: <span id="totalBudgetDisplay">₹0.00</span></p>
+                <p><span data-lang="totalExpenses">Total Expenses</span>: <span id="totalExpensesDisplay">₹0.00</span></p>
+                <p><span data-lang="percentageSpent">Percentage Spent</span>: <span id="percentageSpentDisplay">0.00%</span></p>
+                <p><span data-lang="remainingBudget">Remaining Budget</span>: <span id="remainingBudgetDisplay">₹0.00</span></p>
+                <button class="button danger" id="resetAllBtn" style="margin-top: 20px;"><i class="fa-solid fa-trash-can"></i> <span data-lang="resetAllBtn">Reset All Data</span></button>
+            </section>
+        </div>
+    </main>
+
+<script>
+// --- ADVANCED JAVASCRIPT ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE VARIABLES ---
+    let totalBudget = 0;
+    let expenses = [];
+    let editIndex = -1;
+    let expenseChart = null;
+
+    // --- DOM ELEMENTS ---
+    const totalBudgetInput = document.getElementById('totalBudget');
+    const expenseDateInput = document.getElementById('expenseDate');
+    const expenseCategoryInput = document.getElementById('expenseCategory');
+    const expenseAmountInput = document.getElementById('expenseAmount');
+    const editIndexInput = document.getElementById('editIndex');
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+    const addExpenseBtnText = addExpenseBtn.querySelector('span');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const tableBody = document.getElementById('expenseTableBody');
+    const totalBudgetDisplay = document.getElementById('totalBudgetDisplay');
+    const totalExpensesDisplay = document.getElementById('totalExpensesDisplay');
+    const percentageSpentDisplay = document.getElementById('percentageSpentDisplay');
+    const remainingBudgetDisplay = document.getElementById('remainingBudgetDisplay');
+    const noExpensesMessage = document.getElementById('noExpensesMessage');
+    const noChartDataMessage = document.getElementById('noChartDataMessage');
+    const chartCanvas = document.getElementById('expenseChart');
+    const budgetErrorEl = document.getElementById('budgetError');
+    const dateErrorEl = document.getElementById('dateError');
+    const categoryErrorEl = document.getElementById('categoryError');
+    const amountErrorEl = document.getElementById('amountError');
+    
+    // Menu & Modal Elements
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+    const languageToggle = document.getElementById('languageToggle');
+    const themeToggle = document.getElementById('themeToggle');
+    const aboutLink = document.getElementById('aboutLink');
+    const aboutModal = document.getElementById('aboutModal');
+    const closeAboutModal = document.getElementById('closeAboutModal');
+
+    // --- I18N (INTERNATIONALIZATION) ---
+    const translations = {
+        en: {
+            appTitle: "Advanced Budget Planner 💲",
+            setBudgetTitle: "Set/Update Budget",
+            totalMonthlyBudget: "Total Monthly Budget:",
+            placeholderBudget: "e.g. 50000",
+            setBudgetBtn: "Set Budget",
+            addEditExpenseTitle: "Add/Edit Expense ✏️",
+            date: "Date",
+            category: "Category",
+            placeholderCategory: "e.g. Groceries, Travel",
+            amount: "Amount",
+            placeholderAmount: "e.g. 500",
+            addExpenseBtn: "Add Expense",
+            updateExpenseBtn: "Update Expense",
+            cancelBtn: "Cancel",
+            expenseListTitle: "Expense List 🧾",
+            actions: "Actions",
+            noExpenses: "No expenses added yet.",
+            summaryChartTitle: "Spending Chart 📊",
+            noChartData: "Not enough data to display chart.",
+            summaryTitle: "Budget Summary 📉📈",
+            totalBudget: "Total Budget",
+            totalExpenses: "Total Expenses",
+            percentageSpent: "Percentage Spent",
+            remainingBudget: "Remaining Budget",
+            resetAllBtn: "Reset All Data",
+            edit: "Edit",
+            delete: "Delete",
+            confirmDelete: (category, amount) => `Are you sure you want to delete this expense?\nCategory: ${category}\nAmount: ${amount}`,
+            confirmReset: "Are you sure you want to reset all your budget and expense data? This action cannot be undone.",
+            alertReset: "All data has been reset.",
+            errorBudget: "Please enter a valid positive budget amount.",
+            errorDate: "Please select a date.",
+            errorCategory: "Please enter a category.",
+            errorAmount: "Please enter a valid positive amount.",
+            language: "Language",
+            english: "English",
+            hindi: "Hindi",
+            theme: "Theme",
+            light: "Light",
+            dark: "Dark",
+            about: "About",
+            createdBy: "Created by:",
+            aboutApp: "About App",
+            aboutText: "This is a futuristic budget planner designed to help you manage your finances with ease. Track your income and expenses, visualize your spending with charts, and stay on top of your financial goals with a sleek, modern interface."
+        },
+        hi: {
+            appTitle: "उन्नत बजट प्लानर 💲",
+            setBudgetTitle: "बजट सेट/अपडेट करें",
+            totalMonthlyBudget: "कुल मासिक बजट:",
+            placeholderBudget: "उदा. 50000",
+            setBudgetBtn: "बजट सेट करें",
+            addEditExpenseTitle: "खर्च जोड़ें/संपादित करें ✏️",
+            date: "दिनांक",
+            category: "श्रेणी",
+            placeholderCategory: "उदा. किराना, यात्रा",
+            amount: "राशि",
+            placeholderAmount: "उदा. 500",
+            addExpenseBtn: "खर्च जोड़ें",
+            updateExpenseBtn: "खर्च अपडेट करें",
+            cancelBtn: "रद्द करें",
+            expenseListTitle: "खर्च सूची 🧾",
+            actions: "कार्रवाई",
+            noExpenses: "कोई खर्च नहीं जोड़ा गया है।",
+            summaryChartTitle: "व्यय सारांश (चार्ट) 📊",
+            noChartData: "चार्ट दिखाने के लिए पर्याप्त डेटा नहीं है।",
+            summaryTitle: "बजट सारांश 📉📈",
+            totalBudget: "कुल बजट",
+            totalExpenses: "कुल खर्च",
+            percentageSpent: "बजट खर्च (%)",
+            remainingBudget: "शेष बजट",
+            resetAllBtn: "सभी डेटा रीसेट करें",
+            edit: "संपादित करें",
+            delete: "हटाएं",
+            confirmDelete: (category, amount) => `क्या आप वाकई इस खर्च को हटाना चाहते हैं?\nश्रेणी: ${category}\nराशि: ${amount}`,
+            confirmReset: "क्या आप वाकई अपना सारा बजट और खर्च डेटा रीसेट करना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+            alertReset: "सभी डेटा रीसेट कर दिया गया है।",
+            errorBudget: "कृपया एक मान्य सकारात्मक बजट राशि दर्ज करें।",
+            errorDate: "कृपया दिनांक चुनें।",
+            errorCategory: "कृपया श्रेणी दर्ज करें।",
+            errorAmount: "कृपया एक मान्य सकारात्मक राशि दर्ज करें।",
+            language: "भाषा",
+            english: "अंग्रेजी",
+            hindi: "हिंदी",
+            theme: "थीम",
+            light: "लाइट",
+            dark: "डार्क",
+            about: "ऐप के बारे में",
+            createdBy: "निर्माता:",
+            aboutApp: "ऐप के बारे में",
+            aboutText: "यह एक भविष्यवादी बजट प्लानर है जो आपको आसानी से अपने वित्त का प्रबंधन करने में मदद करने के लिए डिज़ाइन किया गया है। अपनी आय और व्यय को ट्रैक करें, चार्ट के साथ अपने खर्च की कल्पना करें, और एक आकर्षक, आधुनिक इंटरफ़ेस के साथ अपने वित्तीय लक्ष्यों में शीर्ष पर रहें।"
+        }
+    };
+    let currentLang = 'en';
+
+    const setLanguage = (lang) => {
+        currentLang = lang;
+        localStorage.setItem('budgetAppLang', lang);
+        document.documentElement.lang = lang;
+        languageToggle.checked = (lang === 'hi');
+
+        document.querySelectorAll('[data-lang]').forEach(el => {
+            const key = el.getAttribute('data-lang');
+            if (translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            }
+        });
+        document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-lang-placeholder');
+             if (translations[lang][key]) {
+                el.placeholder = translations[lang][key];
+            }
+        });
+        
+        // Update UI which depends on language (table headers, button texts)
+        updateUI();
+    };
+    
+    // --- THEME SWITCHER ---
+    const setTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('budgetAppTheme', theme);
+        themeToggle.checked = (theme === 'dark');
+        // Update chart colors
+        if(expenseChart) renderChart();
+    };
+
+    // --- HELPER FUNCTIONS ---
+    const formatCurrency = (amount) => amount.toLocaleString('hi-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 });
+    const showError = (element, messageKey) => { element.textContent = translations[currentLang][messageKey]; element.classList.add('visible'); };
+    const clearError = (element) => { element.textContent = ''; element.classList.remove('visible'); };
+    const clearAllFormErrors = () => {
+        clearError(dateErrorEl);
+        clearError(categoryErrorEl);
+        clearError(amountErrorEl);
+    };
+
+    const validateExpenseForm = () => {
+        clearAllFormErrors();
+        let isValid = true;
+        if (!expenseDateInput.value) { showError(dateErrorEl, 'errorDate'); isValid = false; }
+        if (!expenseCategoryInput.value.trim()) { showError(categoryErrorEl, 'errorCategory'); isValid = false; }
+        if (isNaN(parseFloat(expenseAmountInput.value)) || parseFloat(expenseAmountInput.value) <= 0) { showError(amountErrorEl, 'errorAmount'); isValid = false; }
+        return isValid;
+    };
+
+    // --- LOCAL STORAGE ---
+    const saveData = () => {
+        try {
+            localStorage.setItem('totalBudget', totalBudget.toString());
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        } catch (error) { console.error("Error saving data to localStorage:", error); }
+    };
+
+    const loadData = () => {
+        try {
+            const storedBudget = localStorage.getItem('totalBudget');
+            const storedExpenses = localStorage.getItem('expenses');
+            const storedLang = localStorage.getItem('budgetAppLang') || 'en';
+            const storedTheme = localStorage.getItem('budgetAppTheme') || 'light';
+
+            totalBudget = parseFloat(storedBudget) || 0;
+            expenses = storedExpenses ? JSON.parse(storedExpenses) : [];
+            expenses = expenses.map(exp => ({ ...exp, amount: parseFloat(exp.amount) || 0 }));
+            
+            setLanguage(storedLang);
+            setTheme(storedTheme);
+
+            totalBudgetInput.value = totalBudget > 0 ? totalBudget : '';
+            expenseDateInput.valueAsDate = new Date();
+            updateUI();
+        } catch (error) {
+            console.error("Error loading data from localStorage:", error);
+        }
+    };
+    
+    // --- CORE FUNCTIONS ---
+    const updateTotalBudget = () => {
+        clearError(budgetErrorEl);
+        const budgetValue = parseFloat(totalBudgetInput.value);
+        if (isNaN(budgetValue) || budgetValue < 0) {
+            showError(budgetErrorEl, 'errorBudget');
+            return;
+        }
+        totalBudget = budgetValue;
+        updateSummary();
+        saveData();
+    };
+
+    const addOrUpdateExpense = () => {
+        if (!validateExpenseForm()) return;
+        const expense = {
+            date: expenseDateInput.value,
+            category: expenseCategoryInput.value.trim(),
+            amount: parseFloat(expenseAmountInput.value)
+        };
+        editIndex = parseInt(editIndexInput.value);
+        if (editIndex > -1) {
+            expenses[editIndex] = expense;
+        } else {
+            expenses.push(expense);
+        }
+        resetForm();
+        updateUI();
+        saveData();
+    };
+
+    const resetForm = () => {
+        expenseDateInput.valueAsDate = new Date();
+        expenseCategoryInput.value = '';
+        expenseAmountInput.value = '';
+        editIndexInput.value = -1;
+        editIndex = -1;
+        addExpenseBtnText.textContent = translations[currentLang].addExpenseBtn;
+        cancelEditBtn.style.display = 'none';
+        clearAllFormErrors();
+    };
+
+    const updateExpenseTable = () => {
+        tableBody.innerHTML = '';
+        noExpensesMessage.style.display = expenses.length === 0 ? 'block' : 'none';
+        
+        const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+        sortedExpenses.forEach(expense => {
+            const originalIndex = expenses.findIndex(exp => exp === expense);
+            const row = tableBody.insertRow();
+
+            const dateCell = row.insertCell(0);
+            dateCell.textContent = new Date(expense.date).toLocaleDateString(currentLang === 'hi' ? 'hi-IN' : 'en-GB');
+            dateCell.dataset.label = translations[currentLang].date + ":";
+
+            const categoryCell = row.insertCell(1);
+            categoryCell.textContent = expense.category;
+            categoryCell.dataset.label = translations[currentLang].category + ":";
+
+            const amountCell = row.insertCell(2);
+            amountCell.textContent = formatCurrency(expense.amount);
+            amountCell.dataset.label = translations[currentLang].amount + ":";
+
+            const actionCell = row.insertCell(3);
+            actionCell.dataset.label = translations[currentLang].actions + ":";
+            actionCell.classList.add('action-buttons');
+            
+            const editButton = document.createElement('button');
+            editButton.innerHTML = `<i class="fa-solid fa-pencil"></i>`;
+            editButton.title = translations[currentLang].edit;
+            editButton.className = 'button secondary';
+            editButton.onclick = () => editExpense(originalIndex);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i>`;
+            deleteButton.title = translations[currentLang].delete;
+            deleteButton.className = 'button danger';
+            deleteButton.onclick = () => deleteExpense(originalIndex);
+
+            actionCell.append(editButton, deleteButton);
+        });
+    };
+
+    const editExpense = (index) => {
+        const expense = expenses[index];
+        expenseDateInput.value = expense.date;
+        expenseCategoryInput.value = expense.category;
+        expenseAmountInput.value = expense.amount;
+        editIndexInput.value = index;
+        editIndex = index;
+        addExpenseBtnText.textContent = translations[currentLang].updateExpenseBtn;
+        cancelEditBtn.style.display = 'block';
+        expenseDateInput.focus();
+    };
+
+    const deleteExpense = (index) => {
+        const expense = expenses[index];
+        if (confirm(translations[currentLang].confirmDelete(expense.category, formatCurrency(expense.amount)))) {
+            expenses.splice(index, 1);
+            updateUI();
+            saveData();
+        }
+    };
+
+    const updateSummary = () => {
+        const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+        const remainingBudget = totalBudget - totalExpenses;
+        const percentageSpent = totalBudget > 0 ? ((totalExpenses / totalBudget) * 100) : 0;
+
+        totalBudgetDisplay.textContent = formatCurrency(totalBudget);
+        totalExpensesDisplay.textContent = formatCurrency(totalExpenses);
+        percentageSpentDisplay.textContent = `${percentageSpent.toFixed(2)}%`;
+        remainingBudgetDisplay.textContent = formatCurrency(remainingBudget);
+        remainingBudgetDisplay.className = remainingBudget >= 0 ? 'positive' : 'negative';
+    };
+
+    const renderChart = () => {
+        const categoryTotals = expenses.reduce((acc, expense) => {
+            acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+            return acc;
+        }, {});
+        const labels = Object.keys(categoryTotals);
+        const data = Object.values(categoryTotals);
+        
+        const hasData = labels.length > 0;
+        noChartDataMessage.style.display = hasData ? 'none' : 'block';
+        chartCanvas.style.display = hasData ? 'block' : 'none';
+
+        if (expenseChart) expenseChart.destroy();
+        if (!hasData) return;
+        
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const textColor = currentTheme === 'dark' ? '#e0e5ec' : '#525865';
+        
+        const backgroundColors = labels.map((_, i) => `hsl(${i * (360 / labels.length)}, 80%, 65%)`);
+        
+        expenseChart = new Chart(chartCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: translations[currentLang].totalExpenses,
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: currentTheme === 'dark' ? '#2c2f3b' : '#e0e5ec',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: textColor, font: { family: "'Poppins', sans-serif" } }
+                    },
+                    tooltip: {
+                        callbacks: { label: ctx => `${ctx.label}: ${formatCurrency(ctx.parsed)}` },
+                        bodyFont: { family: "'Poppins', sans-serif" },
+                        titleFont: { family: "'Poppins', sans-serif" }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    };
+
+    const updateUI = () => {
+        updateExpenseTable();
+        updateSummary();
+        renderChart();
+    };
+
+    const resetAllData = () => {
+        if (confirm(translations[currentLang].confirmReset)) {
+            totalBudget = 0;
+            expenses = [];
+            localStorage.removeItem('totalBudget');
+            localStorage.removeItem('expenses');
+            totalBudgetInput.value = '';
+            resetForm();
+            updateUI();
+            alert(translations[currentLang].alertReset);
+        }
+    };
+    
+    // --- EVENT LISTENERS ---
+    document.getElementById('setBudgetBtn').addEventListener('click', updateTotalBudget);
+    addExpenseBtn.addEventListener('click', addOrUpdateExpense);
+    cancelEditBtn.addEventListener('click', resetForm);
+    document.getElementById('resetAllBtn').addEventListener('click', resetAllData);
+    
+    // Menu listeners
+    menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    overlay.addEventListener('click', () => sidebar.classList.remove('open'));
+    
+    // Language and Theme listeners
+    languageToggle.addEventListener('change', (e) => setLanguage(e.target.checked ? 'hi' : 'en'));
+    themeToggle.addEventListener('change', (e) => setTheme(e.target.checked ? 'dark' : 'light'));
+    
+    // Modal listeners
+    aboutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        aboutModal.style.display = 'flex';
+        sidebar.classList.remove('open');
+    });
+    closeAboutModal.addEventListener('click', () => aboutModal.style.display = 'none');
+    aboutModal.addEventListener('click', (e) => {
+        if (e.target === aboutModal) aboutModal.style.display = 'none';
+    });
+    
+    // Initial load
+    loadData();
+});
+</script>
+</body>
+</html>
